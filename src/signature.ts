@@ -68,20 +68,28 @@ function safeUrl(value: string): string {
   return /^(https?:|mailto:|tel:)/i.test(trimmed) ? trimmed : ''
 }
 
+function safeColor(value: string, fallback: string): string {
+  return /^#[\da-f]{3,8}$/i.test(value) ? value : fallback
+}
+
+function safeNumber(value: number, min: number, max: number): number {
+  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : min
+}
+
 function inlineTextStyle(item: SignatureItem): string {
   const style = [
-    `color:${item.color}`,
+    `color:${safeColor(item.color, '#34443a')}`,
     `font-family:${item.fontFamily}`,
-    `font-size:${item.fontSize}px`,
+    `font-size:${safeNumber(item.fontSize, 8, 48)}px`,
     `font-weight:${item.bold ? 'bold' : 'normal'}`,
     `font-style:${item.italic ? 'italic' : 'normal'}`,
     `text-decoration:${item.underline ? 'underline' : 'none'}`,
     `text-align:${item.align}`,
-    `padding:${item.padding}px 0`,
+    `padding:${safeNumber(item.padding, 0, 24)}px 0`,
     'line-height:1.5',
   ]
   if (item.type === 'button') {
-    style.push(`background-color:${item.backgroundColor}`, 'border-radius:5px', 'display:inline-block', 'padding:10px 16px', 'text-decoration:none')
+    style.push(`background-color:${safeColor(item.backgroundColor, '#52785f')}`, 'border-radius:5px', 'display:inline-block', 'padding:10px 16px', 'text-decoration:none')
   }
   return style.join(';')
 }
